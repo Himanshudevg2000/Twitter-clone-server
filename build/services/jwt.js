@@ -12,7 +12,17 @@ class JWTService {
             email: user === null || user === void 0 ? void 0 : user.email,
         };
         const token = jsonwebtoken_1.default.sign(payload, JWT_SECRET);
+        console.log('token: ', token);
         return token;
+    }
+    static decodeToken(token) {
+        try {
+            console.log('decodetoken: ', token);
+            return jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        }
+        catch (_a) {
+            return null;
+        }
     }
 }
 exports.default = JWTService;

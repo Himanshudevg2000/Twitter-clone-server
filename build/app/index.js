@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initServer = initServer;
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
+// import cors from "cors";
+const cors = require("cors");
 const server_1 = require("@apollo/server");
 const express4_1 = require("@apollo/server/express4");
 const user_1 = require("./user");
@@ -22,6 +24,7 @@ function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
         app.use(body_parser_1.default.json());
+        app.use(cors());
         app.use((req, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
             res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,OPTIONS");
@@ -40,7 +43,27 @@ function initServer() {
             },
         });
         yield graphqlServer.start();
-        app.use("/graphql", (0, express4_1.expressMiddleware)(graphqlServer));
+        app.use("/graphql", (0, express4_1.expressMiddleware)(graphqlServer, {
+            context: (_a) => __awaiter(this, [_a], void 0, function* ({ req, res }) {
+                return {
+                    user: req.headers.authorization
+                };
+            }),
+        }));
+        // app.use(
+        //   "/graphql",
+        //   expressMiddleware(graphqlServer, {
+        //     context: async ({ req, res }) => {
+        //       return {
+        //         user: req.headers.authorization
+        //           ? JWTService.decodeToken(
+        //               req.headers.authorization.split("Bearer ")[1]
+        //             )
+        //           : undefined,
+        //       };
+        //     },
+        //   })
+        // );
         return app;
     });
 }
