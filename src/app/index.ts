@@ -45,26 +45,15 @@ export async function initServer() {
     "/graphql",
     expressMiddleware(graphqlServer, {
       context: async ({ req, res }) => {
+        const authHeader = req.headers.authorization;  
         return {
-          user: req.headers.authorization
+          user: authHeader
+            ? JWTService.decodeToken(authHeader.split("Bearer ")[1])
+            : undefined,
         };
       },
     })
   );
-  // app.use(
-  //   "/graphql",
-  //   expressMiddleware(graphqlServer, {
-  //     context: async ({ req, res }) => {
-  //       return {
-  //         user: req.headers.authorization
-  //           ? JWTService.decodeToken(
-  //               req.headers.authorization.split("Bearer ")[1]
-  //             )
-  //           : undefined,
-  //       };
-  //     },
-  //   })
-  // );
 
   return app;
 }

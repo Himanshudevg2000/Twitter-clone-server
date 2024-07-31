@@ -26,7 +26,7 @@ interface GoogleTokenResult {
 const queries = {
   verifyGoogleToken: async (parent: any, { token }: { token: string }) => {
     const googleToken = token;
-    console.log('googleToken: ', googleToken);
+    // console.log('googleToken: ', googleToken);
     const googleOAuthURL = new URL("https://oauth2.googleapis.com/tokeninfo");
     googleOAuthURL.searchParams.set("id_token", googleToken);
     const { data } = await axios.get<GoogleTokenResult>(
@@ -58,6 +58,7 @@ const queries = {
     if (!userInDb) throw new Error("User with email not found");
 
     const userToken = await JWTService.generateTokenForUser(userInDb);
+    // console.log('userToken: ', userToken);
 
     return userToken;
   },
